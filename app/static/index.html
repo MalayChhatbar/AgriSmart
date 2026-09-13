@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriSmart AI — Intelligent Agriculture Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #15803d;
+            --primary-dark: #166534;
+            --primary-light: #dcfce7;
+            --accent: #ca8a04;
+            --danger: #b91c1c;
+            --danger-light: #fee2e2;
+            --warning: #d97706;
+            --warning-light: #fef3c7;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.5;
+            padding-bottom: 40px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #064e3b 0%, #15803d 100%);
+            color: white;
+            padding: 24px 20px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-badge {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(4px);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 24px;
+        }
+
+        .title-area h1 {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .title-area p {
+            font-size: 13px;
+            color: #bbf7d0;
+            font-weight: 500;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .status-badge {
+            background: rgba(0, 0, 0, 0.25);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #4ade80;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #4ade80;
+        }
+
+        .lang-btn {
+            background: white;
+            color: var(--primary-dark);
+            border: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .lang-btn:hover {
+            background: #f1f5f9;
+            transform: scale(1.03);
+        }
+
+        /* Nav Tabs */
+        .nav-tabs {
+            max-width: 1200px;
+            margin: 20px auto 0 auto;
+            padding: 0 20px;
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .tab-btn {
+            background: white;
+            border: 1px solid var(--border);
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Container */
+        .main-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+            animation: fadeIn 0.25s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 860px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 12px;
+        }
+
+        .card-header h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Upload Area */
+        .upload-box {
+            border: 2px dashed #94a3b8;
+            border-radius: 12px;
+            padding: 30px 20px;
+            text-align: center;
+            background: #f8fafc;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .upload-box:hover {
+            border-color: var(--primary);
+            background: #f0fdf4;
+        }
+
+        .upload-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .preview-img {
+            max-width: 100%;
+            max-height: 280px;
+            border-radius: 8px;
+            display: none;
+            margin: 16px auto 0 auto;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 15px;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 16px;
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-primary:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+        }
+
+        /* Result Cards */
+        .tier-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
+
+        .tier-1 { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+        .tier-2 { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+        .tier-3 { background: #e0f2fe; color: #075985; border: 1px solid #bae6fd; }
+        .tier-err { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+
+        .disease-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 6px;
+        }
+
+        .conf-meter {
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 10px 0 16px 0;
+        }
+
+        .conf-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #16a34a, #22c55e);
+            border-radius: 5px;
+            transition: width 0.4s ease;
+        }
+
+        .treatment-box {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px;
+            margin-top: 14px;
+        }
+
+        .treatment-box h4 {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .differential-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            margin-bottom: 6px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* Form Inputs */
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.15);
+        }
+
+        /* IoT live cards */
+        .telemetry-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 12px;
+            margin-top: 14px;
+        }
+
+        .telemetry-item {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .telemetry-val {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--primary-dark);
+            margin-top: 4px;
+        }
+
+        .telemetry-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        /* Chat */
+        .chat-window {
+            height: 280px;
+            overflow-y: auto;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .chat-bubble {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .chat-bubble.bot {
+            background: white;
+            border: 1px solid var(--border);
+            align-self: flex-start;
+        }
+
+        .chat-bubble.user {
+            background: var(--primary);
+            color: white;
+            align-self: flex-end;
+        }
+
+        .chat-input-bar {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-content">
+            <div class="logo-area">
+                <div class="logo-badge">🌾</div>
+                <div class="title-area">
+                    <h1 id="txtAppTitle">AgriSmart AI</h1>
+                    <p id="txtAppSubtitle">Intelligent Agriculture for a Sustainable Future — Dual-Model Architecture</p>
+                </div>
+            </div>
+            <div class="header-controls">
+                <div class="status-badge">
+                    <span class="status-dot"></span>
+                    <span>2-Model Active (RTX 3050 CUDA)</span>
+                </div>
+                <button class="lang-btn" id="langToggleBtn" onclick="toggleLanguage()">हिन्दी / English</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('tab-diagnostics')" id="navDiag">🌿 Disease Diagnostic (Core)</button>
+        <button class="tab-btn" onclick="switchTab('tab-recommend')" id="navRecom">🌱 Crop Recommendation (Bonus A)</button>
+        <button class="tab-btn" onclick="switchTab('tab-irrigation')" id="navIrrig">💧 Smart Irrigation (Bonus B & C)</button>
+        <button class="tab-btn" onclick="switchTab('tab-sustainability')" id="navSust">📊 Sustainability Score (Bonus D)</button>
+        <button class="tab-btn" onclick="switchTab('tab-iot')" id="navIot">📡 IoT & Autonomous Agent (Bonus F & G)</button>
+        <button class="tab-btn" onclick="switchTab('tab-assistant')" id="navChat">🤖 Kisan AI Assistant (Bonus E)</button>
+    </div>
+
+    <div class="main-container">
+
+        <!-- ══════════════ TAB 1: CORE DISEASE DETECTION ══════════════ -->
+        <div id="tab-diagnostics" class="tab-panel active">
+            <div class="grid-2">
+                <!-- Upload Column -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 id="txtUploadHeader">📸 Leaf Image Analysis</h2>
+                        <span style="font-size: 12px; color: var(--text-muted); font-weight: 600;">Model 1 + Model 2 Cascade</span>
+                    </div>
+                    <label class="upload-box" for="leafInput">
+                        <span class="upload-icon">🍃</span>
+                        <strong id="txtUploadPrompt">Click or Drag Leaf Photo Here</strong>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Supports Apple, Corn, Tomato, Potato, Grape, etc. + Hand/Negative Rejection</p>
+                    </label>
+                    <input type="file" id="leafInput" accept="image/*" style="display: none;" onchange="handleFileSelect(event)">
+                    <img id="leafPreview" class="preview-img" alt="Leaf Preview">
+                    <button class="btn-primary" id="btnAnalyze" disabled onclick="analyzeLeaf()">⚡ Run Dual-Model Diagnostic</button>
+                </div>
+
+                <!-- Results Column -->
+                <div class="card" id="resultCard" style="display: none;">
+                    <div class="card-header">
+                        <h2>📋 Diagnostic Report</h2>
+                        <span id="badgeTier" class="tier-badge tier-1">Tier 1: Confident</span>
+                    </div>
+
+                    <h3 id="resDiseaseName" class="disease-title">Plant — Disease</h3>
+                    <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 600;">
+                        <span>Calibrated Confidence</span>
+                        <span id="resConfidence">0.0%</span>
+                    </div>
+                    <div class="conf-meter">
+                        <div id="confFill" class="conf-fill" style="width: 0%;"></div>
+                    </div>
+
+                    <p id="resDescription" style="font-size: 13px; color: var(--text-main); margin-bottom: 12px;">Description...</p>
+
+                    <!-- Top 3 Differential Candidates -->
+                    <div id="differentialBox" style="display: none; margin-bottom: 14px;">
+                        <h4 style="font-size: 13px; color: var(--text-muted); margin-bottom: 6px;">Differential Diagnoses (Top Candidates):</h4>
+                        <div id="differentialList"></div>
+                    </div>
+
+                    <!-- Dual Treatment Box -->
+                    <div id="treatmentBox" class="treatment-box">
+                        <h4>🛡️ Recommended Precaution & Treatment:</h4>
+                        <p id="resPrecaution" style="font-size: 13px;">Precaution details...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════ TAB 2: CROP RECOMMENDATION ══════════════ -->
+        <div id="tab-recommend" class="tab-panel">
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>🌱 Soil & Climate Input</h2>
+                        <span style="font-size: 12px; color: var(--text-muted);">Tabular ML Model</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div class="form-group">
+                            <label>Nitrogen (N) [ppm]:</label>
+                            <input type="number" id="inN" class="form-control" value="90">
+                        </div>
+                        <div class="form-group">
+                            <label>Phosphorus (P) [ppm]:</label>
+                            <input type="number" id="inP" class="form-control" value="42">
+                        </div>
+                        <div class="form-group">
+                            <label>Potassium (K) [ppm]:</label>
+                            <input type="number" id="inK" class="form-control" value="43">
+                        </div>
+                        <div class="form-group">
+                            <label>Soil pH (3.5 - 9.0):</label>
+                            <input type="number" id="inPh" class="form-control" step="0.1" value="6.5">
+                        </div>
+                        <div class="form-group">
+                            <label>Temperature (°C):</label>
+                            <input type="number" id="inTemp" class="form-control" step="0.1" value="24.5">
+                        </div>
+                        <div class="form-group">
+                            <label>Humidity (%):</label>
+                            <input type="number" id="inHum" class="form-control" value="80">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Annual Rainfall (mm):</label>
+                        <input type="number" id="inRain" class="form-control" value="180">
+                    </div>
+                    <button class="btn-primary" onclick="predictCropRecommendation()">🌾 Recommend Optimal Crop</button>
+                </div>
+
+                <div class="card" id="recomResultCard" style="display: none;">
+                    <div class="card-header">
+                        <h2>🎯 Recommendation Output</h2>
+                    </div>
+                    <div style="text-align: center; padding: 20px 0;">
+                        <div style="font-size: 48px;">🏆</div>
+                        <h3 id="resRecomCrop" style="font-size: 26px; color: var(--primary-dark); font-weight: 800;">Rice</h3>
+                        <p id="resRecomConf" style="font-weight: 600; color: var(--text-muted);">Confidence: 94.2%</p>
+                    </div>
+                    <div class="treatment-box">
+                        <h4>Top Alternative Crops:</h4>
+                        <div id="recomAlternativesList"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════ TAB 3: SMART IRRIGATION & WEATHER ══════════════ -->
+        <div id="tab-irrigation" class="tab-panel">
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>💧 FAO-56 Smart Irrigation</h2>
+                    </div>
+                    <div class="form-group">
+                        <label>Crop Type:</label>
+                        <select id="irrigCrop" class="form-control">
+                            <option value="Tomato">Tomato</option>
+                            <option value="Potato">Potato</option>
+                            <option value="Corn">Corn</option>
+                            <option value="Apple">Apple</option>
+                            <option value="Grape">Grape</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Soil Moisture (%):</label>
+                        <input type="range" id="irrigMoisture" min="10" max="45" value="22" oninput="document.getElementById('lblMoist').innerText = this.value + '%'" style="width: 100%;">
+                        <span id="lblMoist" style="font-weight: 700; color: var(--primary);">22%</span>
+                    </div>
+                    <div class="form-group">
+                        <label>Rain Probability Next 24h (%):</label>
+                        <input type="range" id="irrigRain" min="0" max="100" value="15" oninput="document.getElementById('lblRainProb').innerText = this.value + '%'" style="width: 100%;">
+                        <span id="lblRainProb" style="font-weight: 700; color: var(--primary);">15%</span>
+                    </div>
+                    <button class="btn-primary" onclick="calculateIrrigationAdvice()">Compute Irrigation Schedule</button>
+                    <div id="irrigOutputBox" class="treatment-box" style="display: none; margin-top: 16px;">
+                        <h4 id="irrigAction">ACTION</h4>
+                        <p id="irrigReason" style="font-size: 13px;"></p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2>🌦️ Weather Disease Vulnerability</h2>
+                    </div>
+                    <div class="form-group">
+                        <label>Ambient Temperature (°C):</label>
+                        <input type="number" id="wTemp" class="form-control" value="26.0">
+                    </div>
+                    <div class="form-group">
+                        <label>Relative Humidity (%):</label>
+                        <input type="number" id="wHum" class="form-control" value="88">
+                    </div>
+                    <div class="form-group">
+                        <label>Foliage Wetness Duration (Hours):</label>
+                        <input type="number" id="wWet" class="form-control" value="5">
+                    </div>
+                    <button class="btn-primary" onclick="calculateWeatherRisk()">Evaluate Disease Pressure</button>
+                    <div id="weatherOutputBox" class="treatment-box" style="display: none; margin-top: 16px;">
+                        <h4 id="weatherRiskLevel">RISK LEVEL</h4>
+                        <p id="weatherAdvisory" style="font-size: 13px;"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════ TAB 4: SUSTAINABILITY SCORE ══════════════ -->
+        <div id="tab-sustainability" class="tab-panel">
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>📊 Farm Sustainability Calculator</h2>
+                        <span style="font-size: 12px; color: var(--text-muted);">Section 3.2 (Bonus D)</span>
+                    </div>
+                    <div class="form-group">
+                        <label>Water Consumption Savings (%):</label>
+                        <input type="number" id="sustWater" class="form-control" value="28">
+                    </div>
+                    <div class="form-group">
+                        <label>Chemical Pesticide Reduction (%):</label>
+                        <input type="number" id="sustChem" class="form-control" value="35">
+                    </div>
+                    <div class="form-group">
+                        <label>Soil Organic Matter (%):</label>
+                        <input type="number" id="sustSoil" class="form-control" step="0.1" value="3.8">
+                    </div>
+                    <div class="form-group">
+                        <label>Scouting / Monitoring Frequency (Days):</label>
+                        <input type="number" id="sustFreq" class="form-control" value="2">
+                    </div>
+                    <button class="btn-primary" onclick="computeSustainability()">Compute Scorecard</button>
+                </div>
+
+                <div class="card" id="sustOutputCard" style="display: none;">
+                    <div class="card-header">
+                        <h2>🏅 Eco-Efficiency Grade</h2>
+                    </div>
+                    <div style="text-align: center; padding: 14px 0;">
+                        <div id="sustScoreDisplay" style="font-size: 48px; font-weight: 800; color: var(--primary);">86.4</div>
+                        <p id="sustGradeDisplay" style="font-weight: 700; color: var(--text-main); font-size: 16px;">A+ (Exemplary Eco-Farming)</p>
+                        <p id="sustCo2Display" style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Est. 362.8 kg CO2 equivalent averted this season</p>
+                    </div>
+                    <div class="treatment-box">
+                        <p style="font-size: 12px; color: var(--text-muted);">Formula: <code>Score = 0.35 * Water + 0.30 * Chemical + 0.20 * Soil + 0.15 * Monitoring</code></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════ TAB 5: IOT & AUTONOMOUS AGENT ══════════════ -->
+        <div id="tab-iot" class="tab-panel">
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>📡 Live IoT Telemetry Feed</h2>
+                        <span class="status-badge" style="background: #e2e8f0; color: #166534;"><span class="status-dot"></span> Node 01 Live</span>
+                    </div>
+                    <p style="font-size: 12px; color: var(--text-muted);">Documented physical stream simulation from ESP32 Agri-Sensors.</p>
+                    
+                    <div class="telemetry-grid">
+                        <div class="telemetry-item">
+                            <span class="telemetry-label">Temperature</span>
+                            <div class="telemetry-val" id="iotTemp">27.4°C</div>
+                        </div>
+                        <div class="telemetry-item">
+                            <span class="telemetry-label">Humidity</span>
+                            <div class="telemetry-val" id="iotHum">78%</div>
+                        </div>
+                        <div class="telemetry-item">
+                            <span class="telemetry-label">Soil Moisture</span>
+                            <div class="telemetry-val" id="iotMoist">26.8%</div>
+                        </div>
+                        <div class="telemetry-item">
+                            <span class="telemetry-label">Soil pH</span>
+                            <div class="telemetry-val" id="iotPh">6.42</div>
+                        </div>
+                        <div class="telemetry-item">
+                            <span class="telemetry-label">Nitrogen</span>
+                            <div class="telemetry-val" id="iotN">84 ppm</div>
+                        </div>
+                        <div class="telemetry-item">
+                            <span class="telemetry-label">Battery</span>
+                            <div class="telemetry-val" id="iotBat">4.08 V</div>
+                        </div>
+                    </div>
+                    <button class="btn-primary" style="margin-top: 14px;" onclick="refreshIotTelemetry()">🔄 Pull Fresh Sensor Reading</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2>⚡ Autonomous Agentic Decision Loop</h2>
+                    </div>
+                    <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Continuous conflict resolution between sensors, weather forecasts, and disease risks.</p>
+                    <div id="agentDecisionBox" class="treatment-box">
+                        <h4 style="color: var(--primary);">🟢 Autonomous Status: ACTIVE</h4>
+                        <p style="font-size: 13px; margin-top: 6px;" id="agentDecisionText">Analyzing current soil moisture against 24-hour rainfall forecast...</p>
+                    </div>
+                    <button class="btn-primary" style="margin-top: 14px;" onclick="triggerAgentCycle()">🧠 Execute Agentic Reasoning Cycle</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════ TAB 6: KISAN AI ASSISTANT ══════════════ -->
+        <div id="tab-assistant" class="tab-panel">
+            <div class="card" style="max-width: 800px; margin: 0 auto;">
+                <div class="card-header">
+                    <h2>🤖 Kisan Agri-Advisory Chatbot</h2>
+                    <span style="font-size: 12px; color: var(--text-muted);">Bilingual (Hindi / English)</span>
+                </div>
+                <div class="chat-window" id="chatWindow">
+                    <div class="chat-bubble bot">
+                        Namaste! I am your AgriSmart Advisor. Ask me anything about crop disease remedies, organic neem oil sprays, fertilizer schedules, or irrigation.
+                    </div>
+                </div>
+                <div class="chat-input-bar">
+                    <input type="text" id="chatInput" class="form-control" placeholder="Ask in Hindi or English (e.g., 'Neem spray kaise banaye?')..." onkeypress="if(event.key==='Enter') sendChat()">
+                    <button class="btn-primary" style="width: auto; margin-top: 0; padding: 0 20px;" onclick="sendChat()">Send</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let currentLang = 'en';
+        let selectedFile = null;
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'hi' : 'en';
+            const isHi = currentLang === 'hi';
+
+            document.getElementById('txtAppTitle').innerText = isHi ? 'एग्रीस्मार्ट एआई (AgriSmart AI)' : 'AgriSmart AI';
+            document.getElementById('txtAppSubtitle').innerText = isHi ? 'टिकाऊ भविष्य के लिए बुद्धिमान कृषि मंच — टू-मॉडल आर्किटेक्चर' : 'Intelligent Agriculture for a Sustainable Future — Dual-Model Architecture';
+            document.getElementById('navDiag').innerText = isHi ? '🌿 रोग निदान (कोर)' : '🌿 Disease Diagnostic (Core)';
+            document.getElementById('navRecom').innerText = isHi ? '🌱 फसल अनुशंसा' : '🌱 Crop Recommendation (Bonus A)';
+            document.getElementById('navIrrig').innerText = isHi ? '💧 स्मार्ट सिंचाई व मौसम' : '💧 Smart Irrigation (Bonus B & C)';
+            document.getElementById('navSust').innerText = isHi ? '📊 स्थिरता स्कोर' : '📊 Sustainability Score (Bonus D)';
+            document.getElementById('navIot').innerText = isHi ? '📡 आईओटी व स्वायत्त एजेंट' : '📡 IoT & Autonomous Agent (Bonus F & G)';
+            document.getElementById('navChat').innerText = isHi ? '🤖 किसान एआई सहायक' : '🤖 Kisan AI Assistant (Bonus E)';
+            document.getElementById('btnAnalyze').innerText = isHi ? '⚡ पत्ता जांचें (निदान चलाएं)' : '⚡ Run Dual-Model Diagnostic';
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                selectedFile = file;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('leafPreview');
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    document.getElementById('btnAnalyze').disabled = false;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        async function analyzeLeaf() {
+            if (!selectedFile) return;
+
+            const btn = document.getElementById('btnAnalyze');
+            btn.disabled = true;
+            btn.innerText = currentLang === 'hi' ? 'विश्लेषण जारी है...' : 'Analyzing with Dual Models...';
+
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+
+            try {
+                const res = await fetch('/api/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+
+                const resultCard = document.getElementById('resultCard');
+                resultCard.style.display = 'block';
+
+                const badge = document.getElementById('badgeTier');
+                const diffBox = document.getElementById('differentialBox');
+                const diffList = document.getElementById('differentialList');
+                diffBox.style.display = 'none';
+                diffList.innerHTML = '';
+
+                if (data.status === 'no_leaf') {
+                    badge.className = 'tier-badge tier-err';
+                    badge.innerText = 'NO PLANT DETECTED';
+                } else if (data.status === 'unsupported_plant') {
+                    badge.className = 'tier-badge tier-err';
+                    badge.innerText = 'UNSUPPORTED VARIETY';
+                } else if (data.tier === 1) {
+                    badge.className = 'tier-badge tier-1';
+                    badge.innerText = 'TIER 1: CONFIDENT DIAGNOSIS';
+                } else if (data.tier === 2) {
+                    badge.className = 'tier-badge tier-2';
+                    badge.innerText = 'TIER 2: DIFFERENTIAL DIAGNOSIS';
+                } else {
+                    badge.className = 'tier-badge tier-3';
+                    badge.innerText = 'TIER 3: SIGNS UNCLEAR';
+                }
+
+                document.getElementById('resDiseaseName').innerText = data.common_name || data.plant;
+                const confPct = ((data.confidence || 0) * 100).toFixed(1);
+                document.getElementById('resConfidence').innerText = confPct + '%';
+                document.getElementById('confFill').style.width = Math.min(100, Math.max(5, confPct)) + '%';
+                document.getElementById('resDescription').innerText = data.description || '';
+                document.getElementById('resPrecaution').innerText = data.precaution || '';
+
+                const candidates = data.likely_candidates || data.top3;
+                if (candidates && candidates.length > 1 && data.status !== 'no_leaf' && data.status !== 'unsupported_plant') {
+                    diffBox.style.display = 'block';
+                    candidates.forEach(c => {
+                        const item = document.createElement('div');
+                        item.className = 'differential-item';
+                        item.innerHTML = `<span>${c.common_name}</span><span style="color: var(--primary);">${c.confidence}%</span>`;
+                        diffList.appendChild(item);
+                    });
+                }
+            } catch (err) {
+                alert('Analysis failed: ' + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = currentLang === 'hi' ? '⚡ पत्ता जांचें (निदान चलाएं)' : '⚡ Run Dual-Model Diagnostic';
+            }
+        }
+
+        async function predictCropRecommendation() {
+            const body = {
+                nitrogen: parseFloat(document.getElementById('inN').value),
+                phosphorus: parseFloat(document.getElementById('inP').value),
+                potassium: parseFloat(document.getElementById('inK').value),
+                ph: parseFloat(document.getElementById('inPh').value),
+                temperature: parseFloat(document.getElementById('inTemp').value),
+                humidity: parseFloat(document.getElementById('inHum').value),
+                rainfall: parseFloat(document.getElementById('inRain').value)
+            };
+
+            const res = await fetch('/api/recommend-crop', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            const data = await res.json();
+
+            document.getElementById('recomResultCard').style.display = 'block';
+            document.getElementById('resRecomCrop').innerText = data.recommended_crop;
+            document.getElementById('resRecomConf').innerText = 'Confidence: ' + data.confidence + '%';
+
+            const list = document.getElementById('recomAlternativesList');
+            list.innerHTML = '';
+            data.top_alternatives.forEach(alt => {
+                const d = document.createElement('div');
+                d.className = 'differential-item';
+                d.innerHTML = `<span>${alt.crop}</span><span>${alt.confidence}% (${alt.suitability})</span>`;
+                list.appendChild(d);
+            });
+        }
+
+        async function calculateIrrigationAdvice() {
+            const body = {
+                crop_type: document.getElementById('irrigCrop').value,
+                soil_moisture: parseFloat(document.getElementById('irrigMoisture').value),
+                rain_prob_next24h: parseFloat(document.getElementById('irrigRain').value),
+                growth_stage: 'mid',
+                temperature: 28.0
+            };
+
+            const res = await fetch('/api/irrigation-advice', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            const data = await res.json();
+
+            const box = document.getElementById('irrigOutputBox');
+            box.style.display = 'block';
+            document.getElementById('irrigAction').innerText = 'Action: ' + data.action;
+            document.getElementById('irrigReason').innerText = currentLang === 'hi' ? data.guidance_hi : data.guidance_en;
+        }
+
+        async function calculateWeatherRisk() {
+            const body = {
+                temperature: parseFloat(document.getElementById('wTemp').value),
+                humidity: parseFloat(document.getElementById('wHum').value),
+                rain_hours: parseFloat(document.getElementById('wWet').value)
+            };
+
+            const res = await fetch('/api/weather-risk', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            const data = await res.json();
+
+            const box = document.getElementById('weatherOutputBox');
+            box.style.display = 'block';
+            document.getElementById('weatherRiskLevel').innerText = `Outbreak Risk: ${data.risk_level} (${data.risk_score}/100)`;
+            document.getElementById('weatherAdvisory').innerText = currentLang === 'hi' ? data.advisory_hi : data.advisory_en;
+        }
+
+        async function computeSustainability() {
+            const body = {
+                water_saved_pct: parseFloat(document.getElementById('sustWater').value),
+                chemical_reduction_pct: parseFloat(document.getElementById('sustChem').value),
+                organic_matter_pct: parseFloat(document.getElementById('sustSoil').value),
+                monitoring_freq_days: parseInt(document.getElementById('sustFreq').value)
+            };
+
+            const res = await fetch('/api/sustainability-score', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            const data = await res.json();
+
+            document.getElementById('sustOutputCard').style.display = 'block';
+            document.getElementById('sustScoreDisplay').innerText = data.sustainability_score;
+            document.getElementById('sustGradeDisplay').innerText = data.grade;
+            document.getElementById('sustCo2Display').innerText = `Est. ${data.co2_reduction_estimate_kg} kg CO2 equivalent averted this season`;
+        }
+
+        async function refreshIotTelemetry() {
+            const res = await fetch('/api/iot-telemetry');
+            const data = await res.json();
+
+            document.getElementById('iotTemp').innerText = data.temperature_c + '°C';
+            document.getElementById('iotHum').innerText = data.humidity_pct + '%';
+            document.getElementById('iotMoist').innerText = data.soil_moisture_pct + '%';
+            document.getElementById('iotPh').innerText = data.soil_ph;
+            document.getElementById('iotN').innerText = data.npk.nitrogen_ppm + ' ppm';
+            document.getElementById('iotBat').innerText = data.battery_voltage + ' V';
+        }
+
+        async function triggerAgentCycle() {
+            const body = {
+                sensor_data: { soil_moisture: 19.5, humidity: 88, temperature: 27 },
+                forecast_data: { rain_chance_24h: 75 },
+                crop_status: { crop: 'Tomato', disease: 'Early Blight' }
+            };
+
+            const res = await fetch('/api/agentic-cycle', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            const data = await res.json();
+
+            const box = document.getElementById('agentDecisionText');
+            if (data.actions_taken && data.actions_taken.length > 0) {
+                const act = data.actions_taken[0];
+                box.innerHTML = `<strong>Priority [${act.priority}]: ${act.action}</strong><br>${currentLang === 'hi' ? act.explanation_hi : act.explanation_en}`;
+            }
+        }
+
+        async function sendChat() {
+            const input = document.getElementById('chatInput');
+            const query = input.value.trim();
+            if (!query) return;
+
+            const win = document.getElementById('chatWindow');
+            const userMsg = document.createElement('div');
+            userMsg.className = 'chat-bubble user';
+            userMsg.innerText = query;
+            win.appendChild(userMsg);
+            input.value = '';
+
+            const res = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query: query, crop: 'Tomato', disease: 'Early Blight' })
+            });
+            const data = await res.json();
+
+            const botMsg = document.createElement('div');
+            botMsg.className = 'chat-bubble bot';
+            botMsg.innerText = currentLang === 'hi' ? data.answer_hi : data.answer_en;
+            win.appendChild(botMsg);
+            win.scrollTop = win.scrollHeight;
+        }
+    </script>
+</body>
+</html>

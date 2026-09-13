@@ -1,0 +1,90 @@
+# ═══════════════════════════════════════════════════════
+# AGRISMART AI - GIT IGNORE
+# Excludes models, training weights, and large datasets
+# ═══════════════════════════════════════════════════════
+
+# Machine Learning Models & Weights (Excluded as per instructions)
+model/
+model_engine/weights/*.onnx
+model_engine/weights/*.pt
+model_engine/weights/*.pth
+model_engine/weights/*.bin
+model_engine/weights/*.safetensors
+*.onnx
+*.pt
+*.pth
+*.pkl
+*.bin
+*.h5
+*.tflite
+*.safetensors
+
+# Keep the weights directory structure
+!model_engine/weights/.gitkeep
+
+# Datasets, Raw Images & Scans
+data/
+report/
+create_no_leaf_data.py
+download.py
+download_eval_negatives.py
+generate_dummy_data.py
+setup_crop_labels.py
+split_data.py
+oxpusiikphgm6s6uv2xs.pdf
+temp_upload_*
+
+# SQLite Database Files
+*.db
+*.sqlite
+*.sqlite3
+
+# Python Environment & Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.pytest_cache/
+
+# Node & Frontend Build Artifacts
+node_modules/
+frontend/node_modules/
+frontend/dist/
+dist/
+.vite/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment & API Keys
+.env
+.env.local
+.env.*.local
+
+# IDE & OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
