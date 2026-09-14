@@ -1,3 +1,5 @@
+from typing import Optional
+from model_engine.base import BaseModelAdapter, ModelPrediction
 try:
     from model.predict_rich import predict_rich
 except ImportError:
