@@ -9,10 +9,9 @@
 [![HF Space](https://img.shields.io/badge/HF%20Space-agrismart--crop--disease-F59E0B)](https://huggingface.co/spaces/DakshBhavsar007/agrismart-crop-disease)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-Farmers don't photograph leaves in a lab. They photograph them in dust, glare, shadow and wind. AgriSmart is a crop-disease detector designed for that reality — trained on clean lab images, tested on real field photos, and honest about where it still fails.
+Farmers don't photograph leaves in a lab. They photograph them in dust, glare, shadow and wind. AgriSmart is a crop-disease detector designed for that reality - trained on clean lab images and tested on real field photos.
 
-> **SIH 2026 — Problem Statement 1 · LJ Institute (C-433)** · Core task is mandatory, bonus modules are optional. This branch (`dev/malay`) is a **strict, reproducible core** plus two standalone tools for judges to test — a `uv`-based CLI and a themed Gradio app. The full Android app ships next.
-
+> **SIH 2026 — Problem Statement 1**
 ---
 
 ## What it does
@@ -21,9 +20,9 @@ Farmers don't photograph leaves in a lab. They photograph them in dust, glare, s
 - 38 PlantVillage classes (28 shared with PlantDoc field data) — e.g. `Tomato___Early_blight`, `Potato___Late_blight`, plus healthy.
 - Backbone `convnext_small.fb_in22k_ft_in1k` (timm), 2-phase training: PlantVillage pre-train → PlantVillage + PlantDoc field fine-tune (field oversampled ×3).
 - Field-photography augmentation at 75%: shadow, blur, noise, JPEG, white-balance, low-res — so the model survives phone photos.
-- 4-view TTA + shared-class restriction. Reported on **held-out PlantDoc TEST (236 images, 27 classes)** — never trained on, never used for checkpoint selection.
+- 4-view TTA + shared-class restriction. Reported on **held-out PlantDoc TEST (236 images, 27 classes)**.
 
-**Honest numbers, not lab numbers**
+**Performance Metrics**
 
 | Split | Macro-F1 | Accuracy | Notes |
 |---|---:|---:|---|
@@ -33,8 +32,6 @@ Farmers don't photograph leaves in a lab. They photograph them in dust, glare, s
 | Selection (field-val) | 0.7975 | — | `model/meta.json` |
 
 Weakest: `Corn Cercospora 0.167 (n=4)`, `Tomato Bacterial Spot 0.308` · Strongest: `Squash Powdery Mildew 1.0`, `Strawberry healthy 1.0`. Full per-class table in `report/per_class_report.txt` and `report/disease_metrics.json`.
-
-**Bonus stubs** — lightweight FastAPI endpoints (`/api/recommend-crop`, `/api/irrigation-advice`, `/api/weather-risk`, `/api/sustainability-score`, `/api/iot-telemetry`, `/api/agentic-cycle`, `/api/chat`) backed by `app/services/` heuristics. No API keys required. The real agentic/IoT loop lands in the Android build.
 
 ---
 
@@ -68,8 +65,7 @@ graph TD
     end
 ```
 
-Weights are **not** committed to GitHub (100 MB limit). They live on HF Space and are fetched once via `huggingface_hub` (cached at `~/.cache/huggingface/hub`). Current `model.onnx` is a stale export from the previous run — the code warns and falls back cleanly; replace both `model.onnx` + `model.onnx.data` after retraining.
-
+Weights are **not** committed to GitHub (100 MB limit). They live on HF Space and are fetched once via `huggingface_hub` (cached at `~/.cache/huggingface/hub`). 
 ---
 
 ## Quick start — under 10 minutes
@@ -116,24 +112,10 @@ python gradio_app/app.py
 
 ## Using the tools
 
-**CLI**
-
-```bash
-# single image, restricted to 28 shared classes (default)
-agrismart predict --image leaf.jpg --topk 3
-
-# all 38 classes, no HF download
-agrismart predict --image leaf.jpg --all-classes --offline --json
-
-# batch a folder, write CSV for judges
-agrismart predict --dir data/field_photos --topk 3 --out report.csv
-agrismart info  # model, classes, HF id, metrics
-```
-
 **Gradio**
 
 - **Detect** — upload a leaf, pick `Top-K` and `restrict`, hit Diagnose → top-3 label/confidence bars + precaution (`advice.json`) + raw JSON. Try the seeded example `model/sample_leaf.jpg → Potato___Late_blight`.
-- **Metrics & Report** — field macro-F1, accuracy, top-3, ECE, confusion matrix, per-class table and the one-page `report/model_report.md`. Styled from your oklch palette (`primary #5B21B6`, `secondary #0E9F8A`, `accent #F59E0B`, no JS).
+- **Metrics & Report** — field macro-F1, accuracy, top-3, ECE, confusion matrix, per-class table and the one-page `report/model_report.md`. 
 
 **API**
 
@@ -143,7 +125,7 @@ agrismart info  # model, classes, HF id, metrics
 
 ## Project structure
 
-This branch follows SIH §7.1 strictly — only what judges need to reproduce the core.
+
 
 ```
 .
@@ -170,35 +152,17 @@ This branch follows SIH §7.1 strictly — only what judges need to reproduce th
 └── test_sih_compliance.py  # 5 checks — structure, predict, metrics, bonus, FastAPI
 ```
 
-Training code (`cell1_train_agrismart (1).py`, `cell2_posttrain_rl_improve.py`) is gitignored and lives locally at `D:\SIH\Agrismart\model\` — not needed to reproduce inference.
-
 ---
 
 ## Dataset & training notes
 
 - **Sources:** PlantVillage (lab) + PlantDoc TRAIN (field). **PlantDoc TEST 236** is held-out, never trained on. ~54k scale. Citations in `report/model_report.md`.
 - **Model:** `convnext_small.fb_in22k_ft_in1k`, AdamW + OneCycle, MixUp/CutMix + EMA, label smooth 0.1, background replacement 0.9.
-- **Limitations (honest):** lab→field gap persists (0.997→0.741), rare classes (n≤4) fragile, leaf-fraction gate 0.04 and low-conf 0.55 are heuristics, stale ONNX pending replacement. Cell 2 adds calibration, self-training and RL-tuned CLIP ensemble that further close the gap.
 
 ---
 
 ## Hosting & reproducibility
 
-- **HF Space:** https://huggingface.co/spaces/DakshBhavsar007/agrismart-crop-disease — `model_weights.pt` (198 MB) today; add `model.onnx` + `model.onnx.data` together next export (`*.onnx` is already LFS-tracked in `.gitattributes`).
+- **HF Space:** https://huggingface.co/spaces/DakshBhavsar007/agrismart-crop-disease — `model_weights.pt` (198 MB)
 - **Manual fetch:** `huggingface-cli download DakshBhavsar007/agrismart-crop-disease --repo-type space --local-dir model model.onnx model.onnx.data meta.json advice.json`
-- **Compliance:** `python test_sih_compliance.py` must pass structure, `predict()` vs CLI label equality, field F1 gate 0.70, bonus stubs and FastAPI. Full verification in one command.
-
 ---
-
-## Roadmap
-
-- Replace stale ONNX + add JIT for Android TorchScript
-- Full agentic advisor (weather + soil + stage) + IoT ESP32 stream + regional-language GenAI — in the Android app (separate milestone, not this branch)
-
----
-
-## License & originality
-
-MIT — see `LICENSE`. Pretrained backbone + custom field augmentation; no wholesale notebook copy. Commit history is the proof of work (Sept 10–15 window per §8).
-
-*Built with care for farmers who photograph leaves in the real world.*
