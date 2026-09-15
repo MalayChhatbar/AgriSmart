@@ -7,42 +7,96 @@ from contextlib import asynccontextmanager
 
 DB_PATH = os.environ.get("AGRISMART_DB_PATH", os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "agrismart.db"))
 
+_DB_INITIALIZED = False
+
+async def _create_tables(db):
+    await db.execute("""
+        CREATE TABLE IF NOT EXISTS settings (
+            key TEXT PRIMARY KEY,
+            value TEXT NOT NULL,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+
+    await db.execute("""
+        CREATE TABLE IF NOT EXISTS farm_profile (
+            id INTEGER PRIMARY KEY CHECK (id = 1),
+            farmer_name TEXT DEFAULT 'Kisan Mitra',
+            farm_location TEXT DEFAULT 'Pune, Maharashtra',
+            latitude REAL DEFAULT 18.5204,
+            longitude REAL DEFAULT 73.8567,
+            primary_crop TEXT DEFAULT 'Tomato',
+            soil_type TEXT DEFAULT 'Loamy',
+            irrigation_type TEXT DEFAULT 'Drip',
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+
+    await db.execute("""
+        INSERT OR IGNORE INTO farm_profile (id, farmer_name, farm_location, latitude, longitude, primary_crop, soil_type, irrigation_type)
+        VALUES (1, 'Kisan Mitra', 'Pune, Maharashtra', 18.5204, 73.8567, 'Tomato', 'Loamy', 'Drip')
+    """)
+
+    await db.execute("""
+        CREATE TABLE IF NOT EXISTS scans (
+            id TEXT PRIMARY KEY,
+            timestamp TEXT NOT NULL,
+            image_path TEXT,
+            plant_name TEXT NOT NULL,
+            disease_name TEXT NOT NULL,
+            confidence REAL NOT NULL,
+            tier INTEGER DEFAULT 1,
+            tier_label TEXT DEFAULT 'Confident Diagnosis',
+            is_healthy INTEGER DEFAULT 0,
+            pathogen TEXT,
+            biology TEXT,
+            organic_remedies TEXT,
+            chemical_remedies TEXT,
+            cultural_remedies TEXT,
+            environmental_advice TEXT,
+            top3 TEXT,
+            source_adapter TEXT DEFAULT 'default',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+
+    # Gracefully add missing columns if upgrading an older database
+    for col, col_type in [("top3", "TEXT"), ("source_adapter", "TEXT DEFAULT 'default'"), ("created_at", "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")]:
+        try:
+            await db.execute(f"ALTER TABLE scans ADD COLUMN {col} {col_type}")
+        except Exception:
+            pass
+
+
+    await db.execute("""
+        CREATE TABLE IF NOT EXISTS chat_history (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            session_id TEXT DEFAULT 'default',
+            sender TEXT NOT NULL,
+            text TEXT NOT NULL,
+            text_hi TEXT,
+            tool_calls TEXT,
+            timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+    await db.commit()
+
 @asynccontextmanager
 async def get_db_connection():
+    global _DB_INITIALIZED
     os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
     async with aiosqlite.connect(DB_PATH) as db:
         db.row_factory = aiosqlite.Row
+        if not _DB_INITIALIZED:
+            await _create_tables(db)
+            _DB_INITIALIZED = True
         yield db
 
 async def init_db():
     """Initializes the SQLite database tables if they do not exist."""
     async with get_db_connection() as db:
-        await db.execute("""
-            CREATE TABLE IF NOT EXISTS settings (
-                key TEXT PRIMARY KEY,
-                value TEXT NOT NULL,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        """)
+        pass
 
-        await db.execute("""
-            CREATE TABLE IF NOT EXISTS farm_profile (
-                id INTEGER PRIMARY KEY CHECK (id = 1),
-                farmer_name TEXT DEFAULT 'Kisan Mitra',
-                farm_location TEXT DEFAULT 'Pune, Maharashtra',
-                latitude REAL DEFAULT 18.5204,
-                longitude REAL DEFAULT 73.8567,
-                primary_crop TEXT DEFAULT 'Tomato',
-                soil_type TEXT DEFAULT 'Loamy',
-                irrigation_type TEXT DEFAULT 'Drip',
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        """)
-
-        await db.execute("""
-            INSERT OR IGNORE INTO farm_profile (id, farmer_name, farm_location, latitude, longitude, primary_crop, soil_type, irrigation_type)
-            VALUES (1, 'Kisan Mitra', 'Pune, Maharashtra', 18.5204, 73.8567, 'Tomato', 'Loamy', 'Drip')
-        """)
 
         await db.execute("""
             CREATE TABLE IF NOT EXISTS scans (
