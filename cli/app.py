@@ -23,7 +23,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from model.predict import predict_topk, ADVICE  # type: ignore
+from model.predict import predict_topk, ADVICE, OOD_LABEL, OOD_ADVICE  # type: ignore
 
 app = typer.Typer(add_completion=False, help="AgriSmart AI — Crop Disease CLI (ONNX Runtime -> HF -> heuristic)")
 console = Console()
@@ -54,8 +54,9 @@ def predict_cmd(
             raise typer.Exit(1)
         top, engine = predict_topk(str(image), topk=topk, restrict=not all_classes, offline=offline)
         label = top[0][0]
+        advice_text = OOD_ADVICE if label == OOD_LABEL else ADVICE.get(label, "")
         if json_out:
-            console.print(json.dumps({"image": str(image), "prediction": label, "engine": engine, "topk": [{"label": l, "confidence": p} for l, p in top], "advice": ADVICE.get(label, "")}, indent=2))
+            console.print(json.dumps({"image": str(image), "prediction": label, "ood": label==OOD_LABEL, "engine": engine, "topk": [{"label": l, "confidence": p} for l, p in top], "advice": advice_text}, indent=2))
         else:
             table = Table(title=f"AgriSmart — {image.name}  [engine: {engine}]", show_header=True)
             table.add_column("Rank", justify="right")
@@ -64,7 +65,9 @@ def predict_cmd(
             for i, (l, p) in enumerate(top, 1):
                 table.add_row(str(i), l, f"{p:.3f}" + f"  ({p:.1%})")
             console.print(table)
-            if label in ADVICE:
+            if label == OOD_LABEL:
+                console.print(f"\n[bold yellow]{OOD_ADVICE}[/bold yellow]")
+            elif label in ADVICE:
                 console.print(f"\n[bold]Advice:[/bold] {ADVICE[label]}")
             # last line must be bare label for pipe compatibility (SIH 4.1)
             console.print(label)
@@ -83,7 +86,9 @@ def predict_cmd(
     for p in track(images, description="Predicting..."):
         try:
             top, engine = predict_topk(str(p), topk=topk, restrict=not all_classes, offline=offline)
-            rows.append({"image": str(p), "prediction": top[0][0], "confidence": f"{top[0][1]:.4f}", "engine": engine, "top3": json.dumps(top), "advice": ADVICE.get(top[0][0], "")})
+            lab = top[0][0]
+            adv = OOD_ADVICE if lab == OOD_LABEL else ADVICE.get(lab, "")
+            rows.append({"image": str(p), "prediction": lab, "confidence": f"{top[0][1]:.4f}", "engine": engine, "top3": json.dumps(top), "advice": adv})
         except Exception as e:
             rows.append({"image": str(p), "prediction": "ERROR", "confidence": "0", "engine": "error", "top3": str(e), "advice": ""})
 

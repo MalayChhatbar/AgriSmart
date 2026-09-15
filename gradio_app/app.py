@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from model.predict import predict_topk, META, ADVICE
+from model.predict import predict_topk, META, ADVICE, OOD_LABEL, OOD_ADVICE
 
 # oklch -> hex theme (approx)
 COLORS = {
@@ -74,6 +74,20 @@ def run_predict(img, topk, restrict):
     try:
         top, engine = predict_topk(tmp_path, topk=int(topk), restrict=restrict, offline=False)
         label, conf = top[0]
+        # OOD gate — scientific 4-layer check
+        if label == OOD_LABEL:
+            md = f"""
+<div style="border:2px solid {COLORS['border']}; border-radius:1rem; padding:16px; background:{COLORS['accent']};">
+  <div style="display:flex; gap:8px; align-items:center;">
+    <span class="badge" style="background:black;color:white;border-color:{COLORS['border']}">No leaf detected</span>
+    <span class="badge badge-primary">Engine: {engine}</span>
+  </div>
+  <h3 style="margin:12px 0 4px;">No leaf found</h3>
+  <p style="margin:0; line-height:1.5;">{OOD_ADVICE}</p>
+  <p style="margin:8px 0 0; font-size:0.9rem; opacity:0.7;">Scientific gate: foliage prior + Helmholtz free energy + entropy/margin + prototype cosine</p>
+</div>
+"""
+            return {OOD_LABEL: 1.0}, md, "| Rank | Label | Confidence |\n|---|---|---|\n| 1 | `NO_LEAF_DETECTED` | 1.000 (100.0%) |", {"prediction": OOD_LABEL, "ood": True, "engine": engine}
         advice = ADVICE.get(label, "No advice available.")
         # status badge
         tier = "confident" if conf >= 0.70 else "uncertain"
