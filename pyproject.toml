@@ -27,5 +27,8 @@ agrismart = "cli.app:app"
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+[tool.hatch.build.targets.wheel]
+packages = ["app", "cli", "gradio_app", "model"]
+
 [tool.uv]
 managed = true
