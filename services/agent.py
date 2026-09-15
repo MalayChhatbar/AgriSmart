@@ -135,11 +135,17 @@ def get_client(api_key: Optional[str] = None) -> Optional[AsyncOpenAI]:
     key = api_key or os.environ.get("NVIDIA_API_KEY") or os.environ.get("OPENAI_API_KEY")
     if not key or not key.strip():
         return None
-    if key.strip().startswith("sk-"):
-        return AsyncOpenAI(api_key=key.strip())
+    key = key.strip()
+    
+    if key.startswith("AIza"):
+        # Gemini API Key (OpenAI Compatible Endpoint)
+        return AsyncOpenAI(api_key=key, base_url="https://generativelanguage.googleapis.com/v1beta/openai/")
+    elif key.startswith("sk-"):
+        return AsyncOpenAI(api_key=key)
+    
     # If key starts with nvapi-, it is an NVIDIA NIM key
     base_url = NVIDIA_BASE_URL if key.startswith("nvapi-") else os.environ.get("OPENAI_BASE_URL", NVIDIA_BASE_URL)
-    return AsyncOpenAI(api_key=key.strip(), base_url=base_url)
+    return AsyncOpenAI(api_key=key, base_url=base_url)
 
 # ═══════════════════════════════════════════════════════════════════════
 #   DYNAMIC REMEDY GENERATOR (NVIDIA NIM / DEEPSEEK / KIMI)

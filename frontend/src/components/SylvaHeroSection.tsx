@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SylvaHero } from '../shaders/landing-pages/LandingPages';
+
 import { Sparkles, Maximize2, Minimize2, Scan, MessageSquare, CloudRain } from 'lucide-react';
 
 interface SylvaHeroSectionProps {
