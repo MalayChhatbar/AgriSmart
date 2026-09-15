@@ -108,7 +108,7 @@ def run_predict(img, topk, restrict):
     return None, "", "", {}
 
 def build_demo():
-    with gr.Blocks(title="AgriSmart AI — Crop Disease Detector", css=CSS, theme=gr.themes.Soft(primary_hue="violet", secondary_hue="teal")) as demo:
+    with gr.Blocks(title="AgriSmart AI — Crop Disease Detector") as demo:
         with gr.Column(elem_id="header"):
             gr.Markdown("# AgriSmart AI — Crop Disease Detection")
             gr.Markdown("Upload a leaf photo. Core model: `convnext_small.fb_in22k_ft_in1k` (38 classes, 28 shared) — ONNX Runtime → HF Space → heuristic fallback. Reports honest field metrics, not lab-inflated numbers.")
@@ -159,7 +159,7 @@ def build_demo():
                 gr.Markdown("#### Per-class report")
                 pcr = ROOT / "report" / "per_class_report.txt"
                 if pcr.exists():
-                    gr.Code(value=pcr.read_text(encoding="utf-8")[:12000], language="text", label="per_class_report.txt")
+                    gr.Code(value=pcr.read_text(encoding="utf-8")[:12000], label="per_class_report.txt")
                 else:
                     gr.Markdown("*per_class_report.txt not found*")
 
@@ -179,4 +179,11 @@ def build_demo():
 
 if __name__ == "__main__":
     demo = build_demo()
-    demo.launch(server_name="0.0.0.0", server_port=7860, share=False, show_error=True)
+    demo.launch(
+        server_name="0.0.0.0",
+        server_port=7860,
+        share=False,
+        show_error=True,
+        theme=gr.themes.Soft(primary_hue="violet", secondary_hue="teal"),
+        css=CSS,
+    )
