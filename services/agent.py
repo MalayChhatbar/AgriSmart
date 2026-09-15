@@ -370,11 +370,11 @@ AGENT_TOOLS = [
     }
 ]
 
-async def execute_tool_call(name: str, args: Dict[str, Any]) -> Dict[str, Any]:
+async def execute_tool_call(name: str, args: Dict[str, Any], openweather_key: Optional[str] = None) -> Dict[str, Any]:
     """Dispatches tool calls from the AI agent."""
     if name == "get_weather_and_spray_window":
         loc = args.get("location", "Pune, Maharashtra")
-        w = await get_live_weather(location_name=loc)
+        w = await get_live_weather(location_name=loc, openweather_api_key=openweather_key)
         return {
             "location": w["location"],
             "temperature_c": w["current"]["temperature"],
@@ -425,7 +425,8 @@ async def run_conversational_agent(
     language: str = "en",
     api_key: Optional[str] = None,
     model_name: Optional[str] = None,
-    history: Optional[List[Dict[str, str]]] = None
+    history: Optional[List[Dict[str, str]]] = None,
+    openweather_key: Optional[str] = None
 ) -> Dict[str, Any]:
     """
     Autonomous tool-calling loop for Kisan AI Assistant.
@@ -462,10 +463,15 @@ async def run_conversational_agent(
         "disease risk indices, and treatment dosages. "
         "Always invoke relevant tools when the farmer asks about spraying, watering, weather, or treatments. "
         "Provide direct, compassionate, highly practical answers. "
-        "Always output your final answer with both English and Hindi sections clearly formatted."
+        "Talk in English by default. Only talk in Hindi or Hinglish if the user explicitly asks for it."
     )
-
     messages = [{"role": "system", "content": system_prompt}]
+
+    if history:
+        for h in history[-4:]:
+            content_val = h.get("content", "").strip()
+            if content_val:
+                messages.append({"role": h.get("role", "user"), "content": content_val})
 
     # Provide context
     messages.append({
@@ -479,10 +485,6 @@ async def run_conversational_agent(
             f"[QUERY]: {user_query}"
         )
     })
-
-    if history:
-        for h in history[-4:]:
-            messages.append({"role": h.get("role", "user"), "content": h.get("content", "")})
 
     executed_tools = []
     max_tool_iterations = 4
@@ -514,7 +516,7 @@ async def run_conversational_agent(
             for tc in msg.tool_calls:
                 t_name = tc.function.name
                 t_args = json.loads(tc.function.arguments or "{}")
-                tool_result = await execute_tool_call(t_name, t_args)
+                tool_result = await execute_tool_call(t_name, t_args, openweather_key)
                 executed_tools.append({"tool": t_name, "args": t_args, "result": tool_result})
 
                 messages.append({

@@ -15,7 +15,11 @@ def get_model_engine() -> BaseModelAdapter:
         return _cached_adapter
 
     adapter_name = ACTIVE_ADAPTER.lower().strip()
-    if adapter_name == "huggingface":
+    if adapter_name == "gemini":
+        print("[ModelEngine] Loading GeminiVisionAdapter...")
+        from model_engine.gemini_adapter import GeminiVisionAdapter
+        _cached_adapter = GeminiVisionAdapter()
+    elif adapter_name == "huggingface":
         print("[ModelEngine] Loading HuggingFaceModelAdapter...")
         from model_engine.hf_adapter import HuggingFaceModelAdapter
         _cached_adapter = HuggingFaceModelAdapter()
@@ -29,6 +33,11 @@ def get_model_engine() -> BaseModelAdapter:
         _cached_adapter = DefaultModelAdapter()
 
     return _cached_adapter
+
+def clear_adapter_cache():
+    """Clear cached adapter (useful when settings change)."""
+    global _cached_adapter
+    _cached_adapter = None
 
 def predict_crop_disease(image_path: str, crop_hint: Optional[str] = None) -> ModelPrediction:
     """

@@ -1,10 +1,6 @@
 """
 HuggingFaceAdapter - wired to the hosted Hugging Face Space.
-
-This adapter uses gradio_client to send the image to the cloud model and parse
-the returned predictions and markdown treatment advice.
 """
-
 from typing import Optional, List, Dict, Any
 from model_engine.base import BaseModelAdapter, ModelPrediction
 
@@ -17,35 +13,35 @@ class HuggingFaceModelAdapter(BaseModelAdapter):
         if self._client is None:
             from gradio_client import Client
             print(f"[HuggingFaceAdapter] Connecting to {self.space_id}...")
-            self._client = Client(self.space_id)
+            self._client = Client(self.space_id, token="")
         return self._client
 
     def predict(self, image_path: str, crop_hint: Optional[str] = None) -> ModelPrediction:
         from gradio_client import handle_file
-        client = self._get_client()
-
-        print(f"[HuggingFaceAdapter] Uploading {image_path} for prediction...")
         
         try:
-            # Result is a tuple: (predictions_dict, treatment_markdown)
+            client = self._get_client()
+            print(f"[HuggingFaceAdapter] Uploading {image_path} for prediction...")
+            
             result = client.predict(
                 img=handle_file(image_path),
                 api_name="/run"
             )
             
-            predictions_dict = result[0]  # e.g. {"Apple___Apple_scab": 0.95, ...}
-            treatment_md = result[1]      # Markdown text
+            raw_predictions = result[0]
+            treatment_md = result[1]
             
-            # Handle Gradio Label format
-            if isinstance(predictions_dict, dict) and "confidences" in predictions_dict:
-                top_results = [(d["label"], float(d["confidence"])) for d in predictions_dict["confidences"][:3]]
-            elif isinstance(predictions_dict, dict):
-                sorted_preds = sorted(predictions_dict.items(), key=lambda item: float(item[1]), reverse=True)
+            # --- Parse the response ---
+            # Format: {'label': 'X___Y', 'confidences': [{'label': '...', 'confidence': 0.xx}, ...]}
+            if isinstance(raw_predictions, dict) and 'confidences' in raw_predictions:
+                confidences_list = raw_predictions['confidences']
+                top_results = [(c['label'], c['confidence']) for c in confidences_list[:3]]
+            elif isinstance(raw_predictions, dict):
+                # Old format: {disease_name: confidence_float, ...}
+                sorted_preds = sorted(raw_predictions.items(), key=lambda item: item[1], reverse=True)
                 top_results = sorted_preds[:3]
-            elif isinstance(predictions_dict, list):
-                top_results = [(d["label"], float(d["confidence"])) for d in predictions_dict[:3]]
             else:
-                top_results = []
+                raise ValueError(f"Unexpected predictions format: {type(raw_predictions)}")
             
             if not top_results:
                 raise ValueError("No predictions returned from Hugging Face.")
@@ -59,8 +55,9 @@ class HuggingFaceModelAdapter(BaseModelAdapter):
                 disease_part = top_label
 
             common_name = f"{plant_name} - {disease_part.replace('_', ' ')}"
+            
+            print(f"[HuggingFaceAdapter] Detected: {common_name} ({top_conf:.1%})")
 
-            # -- Build top-3 candidates list --
             candidates: List[Dict[str, Any]] = []
             for label, conf in top_results:
                 if "___" in label:
@@ -74,7 +71,6 @@ class HuggingFaceModelAdapter(BaseModelAdapter):
                     "confidence": float(conf)
                 })
 
-            # Assign a confidence tier
             if top_conf >= 0.80:
                 tier = 1
                 status = "confident"
@@ -95,18 +91,19 @@ class HuggingFaceModelAdapter(BaseModelAdapter):
                 top_candidates=candidates,
                 crop_guided=bool(crop_hint),
                 adapter_source="huggingface",
-                raw_info={"treatment": treatment_md}  # Store the markdown here
+                raw_info={"treatment": treatment_md}
             )
             
         except Exception as e:
-            print(f"[HuggingFaceAdapter] Error during prediction: {e}")
+            print(f"[HuggingFaceAdapter] Prediction failed: {e}")
+            self._client = None  # Reset client for next retry
             return ModelPrediction(
                 plant=crop_hint or "Unknown",
                 disease="Unknown",
                 confidence=0.0,
                 status="unclear",
                 tier=3,
-                common_name="Error reaching Hugging Face API",
+                common_name="Error reaching prediction API",
                 adapter_source="huggingface",
                 raw_info={"error": str(e)}
             )

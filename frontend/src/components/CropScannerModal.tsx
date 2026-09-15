@@ -28,6 +28,7 @@ export const CropScannerModal: React.FC<CropScannerModalProps> = ({
   const [selectedPresetKey, setSelectedPresetKey] = useState<string | undefined>(undefined);
   const [selectedCropHint, setSelectedCropHint] = useState<string>('auto');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
 
   if (!isOpen) return null;
 
@@ -149,25 +150,49 @@ export const CropScannerModal: React.FC<CropScannerModalProps> = ({
                 )}
               </div>
             ) : (
-              <div
-                onClick={() => fileInputRef.current?.click()}
-                className="cursor-pointer flex flex-col items-center justify-center p-6 w-full h-full"
-              >
-                <div className="w-14 h-14 rounded-2xl bg-primary/15 text-primary flex items-center justify-center mb-3 shadow-inner">
+              <div className="flex flex-col items-center justify-center p-6 w-full h-full gap-3">
+                <div className="w-14 h-14 rounded-2xl bg-primary/15 text-primary flex items-center justify-center mb-1 shadow-inner">
                   <Upload className="w-7 h-7" />
                 </div>
-                <h4 className="font-bold text-sm text-foreground">Tap to take photo or upload</h4>
-                <p className="text-xs text-muted-foreground mt-1 max-w-[240px]">
-                  Take a clear photo of an affected leaf surface in good lighting
+                <h4 className="font-bold text-sm text-foreground">Scan a Leaf</h4>
+                <p className="text-xs text-muted-foreground max-w-[240px]">
+                  Take a clear photo or choose from your gallery
                 </p>
+                <div className="flex gap-3 mt-1 w-full">
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="flex-1 flex flex-col items-center gap-1.5 py-3 px-3 rounded-xl border-2 border-primary/30 bg-primary/10 hover:bg-primary/20 text-primary font-semibold text-xs transition-all cursor-pointer"
+                  >
+                    <Camera className="w-5 h-5" />
+                    <span>Take Photo</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => galleryInputRef.current?.click()}
+                    className="flex-1 flex flex-col items-center gap-1.5 py-3 px-3 rounded-xl border-2 border-border bg-secondary/60 hover:bg-secondary text-foreground font-semibold text-xs transition-all cursor-pointer"
+                  >
+                    <Upload className="w-5 h-5" />
+                    <span>Browse Gallery</span>
+                  </button>
+                </div>
               </div>
             )}
 
+            {/* Camera input (opens camera directly on mobile) */}
             <input
               ref={fileInputRef}
               type="file"
               accept="image/*"
               capture="environment"
+              onChange={handleFileChange}
+              className="hidden"
+            />
+            {/* Gallery input (opens file picker / photo gallery) */}
+            <input
+              ref={galleryInputRef}
+              type="file"
+              accept="image/*"
               onChange={handleFileChange}
               className="hidden"
             />

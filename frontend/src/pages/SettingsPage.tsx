@@ -136,19 +136,19 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
           </div>
 
           <div className="space-y-3">
-            {/* NVIDIA NIM / DeepSeek API Key */}
+            {/* AI Model API Key */}
             <div className="p-3 rounded-xl bg-primary/5 border border-primary/20 space-y-2">
               <label className="block text-xs font-semibold text-foreground flex items-center justify-between">
                 <span className="flex items-center gap-1.5 text-primary font-bold">
-                  <span>NVIDIA NIM / DeepSeek API Key</span>
+                  <span>AI Model API Key</span>
                 </span>
                 <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary/20 text-primary font-bold">Recommended</span>
               </label>
               <input
                 type="password"
-                value={formData.nvidiaApiKey || ''}
-                onChange={(e) => setFormData({ ...formData, nvidiaApiKey: e.target.value })}
-                placeholder="nvapi-... or sk-..."
+                value={formData.nvidiaApiKey || formData.geminiApiKey || formData.openaiApiKey || ''}
+                onChange={(e) => setFormData({ ...formData, nvidiaApiKey: e.target.value, geminiApiKey: e.target.value, openaiApiKey: e.target.value })}
+                placeholder="sk-..., AIzaSy..., or nvapi-..."
                 className="w-full bg-input/90 border border-primary/30 rounded-xl px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground font-mono focus:ring-1 focus:ring-primary focus:outline-none"
               />
               <div className="flex items-center justify-between gap-2 pt-1">
@@ -173,38 +173,9 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
               </p>
             </div>
 
-            {/* Gemini API Key */}
-            <div>
-              <label className="block text-xs font-semibold text-foreground mb-1 flex items-center justify-between">
-                <span>Google Gemini API Key</span>
-                <span className="text-[10px] text-muted-foreground font-normal">Optional</span>
-              </label>
-              <input
-                type="password"
-                value={formData.geminiApiKey}
-                onChange={(e) => setFormData({ ...formData, geminiApiKey: e.target.value })}
-                placeholder="AIzaSy..."
-                className="w-full bg-input/70 border border-border rounded-xl px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground font-mono focus:ring-1 focus:ring-primary focus:outline-none"
-              />
-              <p className="text-[10px] text-muted-foreground mt-1">
-                Used for enhanced regional conversational advice and grounded Q&A.
-              </p>
-            </div>
+            
 
-            {/* OpenAI API Key */}
-            <div>
-              <label className="block text-xs font-semibold text-foreground mb-1 flex items-center justify-between">
-                <span>OpenAI API Key</span>
-                <span className="text-[10px] text-muted-foreground font-normal">Optional</span>
-              </label>
-              <input
-                type="password"
-                value={formData.openaiApiKey}
-                onChange={(e) => setFormData({ ...formData, openaiApiKey: e.target.value })}
-                placeholder="sk-..."
-                className="w-full bg-input/70 border border-border rounded-xl px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground font-mono focus:ring-1 focus:ring-primary focus:outline-none"
-              />
-            </div>
+            
 
             {/* OpenWeatherMap Key */}
             <div>

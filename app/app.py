@@ -351,6 +351,7 @@ async def chat_endpoint(req: ChatRequest):
     )
 
     # 4. Invoke Tool-Calling Agent Loop
+    ow_key = await get_setting("openweather_api_key")
     agent_res = await run_conversational_agent(
         user_query=req.query,
         crop=req.crop or farm.get("primary_crop", "Tomato"),
@@ -360,7 +361,8 @@ async def chat_endpoint(req: ChatRequest):
         language=req.language or "en",
         api_key=chosen_key,
         model_name=ai_model,
-        history=history_formatted
+        history=history_formatted,
+        openweather_key=ow_key
     )
 
     # 5. Save assistant reply to SQLite
