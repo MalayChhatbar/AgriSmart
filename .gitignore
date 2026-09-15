@@ -88,3 +88,6 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+
+# Ignore large model weights for GitHub
+model/model_weights.pt

@@ -17,7 +17,11 @@ def get_model_engine() -> BaseModelAdapter:
         return _cached_adapter
 
     adapter_name = ACTIVE_ADAPTER.lower().strip()
-    if adapter_name == "teammate":
+    if adapter_name == "huggingface":
+        print("[ModelEngine] Loading HuggingFaceModelAdapter...")
+        from model_engine.hf_adapter import HuggingFaceModelAdapter
+        _cached_adapter = HuggingFaceModelAdapter()
+    elif adapter_name == "teammate":
         print("[ModelEngine] Loading TeammateModelAdapter...")
         _cached_adapter = TeammateModelAdapter()
     else:
