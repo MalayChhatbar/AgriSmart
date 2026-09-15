@@ -196,7 +196,7 @@ export const KisanChatDrawer: React.FC<KisanChatDrawerProps> = ({
         </div>
 
         {/* Input Bar */}
-        <div className="p-3 border-t border-border bg-card flex items-center gap-2">
+        <div className="p-3 pb-6 border-t border-border bg-card flex items-center gap-2">
           <input
             type="text"
             value={input}

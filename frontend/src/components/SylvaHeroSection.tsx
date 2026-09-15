@@ -19,18 +19,15 @@ export const SylvaHeroSection: React.FC<SylvaHeroSectionProps> = ({
     <div className="relative rounded-3xl overflow-hidden border border-border/80 shadow-md bg-card transition-all duration-300">
       {/* 3D Living World Canvas Container */}
       <div
-        className={`w-full relative transition-all duration-500 ease-out ${
-          isExpanded ? 'h-[440px]' : 'h-[250px]'
+        className={`w-full relative transition-all duration-500 ease-out flex items-center justify-center ${
+          isExpanded ? 'h-[300px]' : 'h-[200px]'
         }`}
+        style={{
+          background: 'linear-gradient(135deg, #0f172a 0%, #064e3b 100%)'
+        }}
       >
-        <SylvaHero
-          variant="living-green"
-          style={{
-            width: '100%',
-            height: '100%',
-            border: 0,
-          }}
-        />
+        {/* Subtle pattern overlay */}
+        <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0)', backgroundSize: '24px 24px' }}></div>
 
         {/* Ambient Top Vignette */}
         <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-black/40 via-transparent to-card/95" />

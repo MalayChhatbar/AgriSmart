@@ -135,6 +135,8 @@ def get_client(api_key: Optional[str] = None) -> Optional[AsyncOpenAI]:
     key = api_key or os.environ.get("NVIDIA_API_KEY") or os.environ.get("OPENAI_API_KEY")
     if not key or not key.strip():
         return None
+    if key.strip().startswith("sk-"):
+        return AsyncOpenAI(api_key=key.strip())
     # If key starts with nvapi-, it is an NVIDIA NIM key
     base_url = NVIDIA_BASE_URL if key.startswith("nvapi-") else os.environ.get("OPENAI_BASE_URL", NVIDIA_BASE_URL)
     return AsyncOpenAI(api_key=key.strip(), base_url=base_url)

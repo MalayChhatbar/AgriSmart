@@ -10,7 +10,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   weatherApiKey: '',
   nvidiaApiKey: '',
   aiModel: 'deepseek-ai/deepseek-v3',
-  backendUrl: 'http://127.0.0.1:8000',
+  backendUrl: 'https://agrismart-62u5.onrender.com',
   farmerName: 'Ramesh Patel',
   farmLocation: 'Nashik District, Maharashtra',
   primaryCrop: 'Tomato',

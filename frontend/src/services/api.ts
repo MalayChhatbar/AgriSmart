@@ -1,8 +1,12 @@
 import { DiagnosisResult, EnvironmentalContext, ChatMessage } from '../types';
 
-export const BACKEND_DEFAULT = typeof window !== 'undefined' && window.location.hostname && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1'
-  ? `http://${window.location.hostname}:8000`
-  : 'http://127.0.0.1:8000';
+import { Capacitor } from '@capacitor/core';
+
+export const BACKEND_DEFAULT = Capacitor.isNativePlatform() 
+  ? 'https://agrismart-62u5.onrender.com'
+  : (typeof window !== 'undefined' && window.location.hostname && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1'
+      ? `https://${window.location.hostname}`
+      : 'http://127.0.0.1:8000');
 
 export interface PlantKnowledge {
   commonName: string;

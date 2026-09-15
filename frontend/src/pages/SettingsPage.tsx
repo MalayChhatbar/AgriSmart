@@ -156,8 +156,10 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                   onChange={(e) => setFormData({ ...formData, aiModel: e.target.value })}
                   className="bg-input border border-border rounded-lg px-2 py-1 text-xs text-foreground focus:ring-1 focus:ring-primary focus:outline-none"
                 >
-                  <option value="deepseek-ai/deepseek-v3">DeepSeek V3 (Reasoning & Advisory)</option>
-                  <option value="deepseek-ai/deepseek-r1">DeepSeek R1 (Deep Agronomic CoT)</option>
+                  <option value="deepseek-ai/deepseek-v3">DeepSeek V3 (NVIDIA NIM)</option>
+                  <option value="deepseek-ai/deepseek-r1">DeepSeek R1 (NVIDIA NIM)</option>
+                  <option value="gpt-4o-mini">GPT-4o Mini (OpenAI)</option>
+                  <option value="gpt-3.5-turbo">GPT-3.5 Turbo (OpenAI)</option>
                   <option value="moonshotai/kimi-k1.5">Kimi K1.5 (Moonshot)</option>
                   <option value="meta/llama-3.3-70b-instruct">Llama 3.3 70B Instruct</option>
                 </select>
