@@ -1,63 +1,70 @@
 """
-Canonical Class Definitions for AgriSmart AI (SIH 2026 Problem Statement 1)
-Aligned with PlantVillage and PlantDoc shared classes (38 classes).
+Canonical Class Definitions — must match meta.json exactly (SIH label verbatim).
+Source: PlantVillage 38 classes (28 shared with PlantDoc). Spaces kept where trained.
 """
+import json
+import os
 
-PLANT_DISEASE_CLASSES = [
-    "Apple___Apple_scab",
-    "Apple___Black_rot",
-    "Apple___Cedar_apple_rust",
-    "Apple___healthy",
-    "Blueberry___healthy",
-    "Cherry_(including_sour)___Powdery_mildew",
-    "Cherry_(including_sour)___healthy",
-    "Corn_(maize)___Cercospora_leaf_spot_Gray_leaf_spot",
-    "Corn_(maize)___Common_rust_",
-    "Corn_(maize)___Northern_Leaf_Blight",
-    "Corn_(maize)___healthy",
-    "Grape___Black_rot",
-    "Grape___Esca_(Black_Measles)",
-    "Grape___Leaf_blight_(Isariopsis_Leaf_Spot)",
-    "Grape___healthy",
-    "Orange___Haunglongbing_(Citrus_greening)",
-    "Peach___Bacterial_spot",
-    "Peach___healthy",
-    "Pepper,_bell___Bacterial_spot",
-    "Pepper,_bell___healthy",
-    "Potato___Early_blight",
-    "Potato___Late_blight",
-    "Potato___healthy",
-    "Raspberry___healthy",
-    "Soybean___healthy",
-    "Squash___Powdery_mildew",
-    "Strawberry___Leaf_scorch",
-    "Strawberry___healthy",
-    "Tomato___Bacterial_spot",
-    "Tomato___Early_blight",
-    "Tomato___Late_blight",
-    "Tomato___Leaf_Mold",
-    "Tomato___Septoria_leaf_spot",
-    "Tomato___Spider_mites_Two-spotted_spider_mite",
-    "Tomato___Target_Spot",
-    "Tomato___Tomato_Yellow_Leaf_Curl_Virus",
-    "Tomato___Tomato_mosaic_virus",
-    "Tomato___healthy"
-]
+_META = os.path.join(os.path.dirname(__file__), "meta.json")
+if os.path.exists(_META):
+    with open(_META, "r", encoding="utf-8") as f:
+        _M = json.load(f)
+    PLANT_DISEASE_CLASSES = _M["classes"]
+    ALLOWED_CLASSES = _M.get("allowed_classes", PLANT_DISEASE_CLASSES)
+else:
+    PLANT_DISEASE_CLASSES = [
+        "Apple___Apple_scab",
+        "Apple___Black_rot",
+        "Apple___Cedar_apple_rust",
+        "Apple___healthy",
+        "Blueberry___healthy",
+        "Cherry_(including_sour)___Powdery_mildew",
+        "Cherry_(including_sour)___healthy",
+        "Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot",
+        "Corn_(maize)___Common_rust_",
+        "Corn_(maize)___Northern_Leaf_Blight",
+        "Corn_(maize)___healthy",
+        "Grape___Black_rot",
+        "Grape___Esca_(Black_Measles)",
+        "Grape___Leaf_blight_(Isariopsis_Leaf_Spot)",
+        "Grape___healthy",
+        "Orange___Haunglongbing_(Citrus_greening)",
+        "Peach___Bacterial_spot",
+        "Peach___healthy",
+        "Pepper,_bell___Bacterial_spot",
+        "Pepper,_bell___healthy",
+        "Potato___Early_blight",
+        "Potato___Late_blight",
+        "Potato___healthy",
+        "Raspberry___healthy",
+        "Soybean___healthy",
+        "Squash___Powdery_mildew",
+        "Strawberry___Leaf_scorch",
+        "Strawberry___healthy",
+        "Tomato___Bacterial_spot",
+        "Tomato___Early_blight",
+        "Tomato___Late_blight",
+        "Tomato___Leaf_Mold",
+        "Tomato___Septoria_leaf_spot",
+        "Tomato___Spider_mites Two-spotted_spider_mite",
+        "Tomato___Target_Spot",
+        "Tomato___Tomato_Yellow_Leaf_Curl_Virus",
+        "Tomato___Tomato_mosaic_virus",
+        "Tomato___healthy",
+    ]
+    ALLOWED_CLASSES = PLANT_DISEASE_CLASSES
 
-CLASS_TO_IDX = {cls_name: i for i, cls_name in enumerate(PLANT_DISEASE_CLASSES)}
-IDX_TO_CLASS = {i: cls_name for i, cls_name in enumerate(PLANT_DISEASE_CLASSES)}
+CLASS_TO_IDX = {c: i for i, c in enumerate(PLANT_DISEASE_CLASSES)}
+IDX_TO_CLASS = {i: c for i, c in enumerate(PLANT_DISEASE_CLASSES)}
+ALLOWED_IDX = [CLASS_TO_IDX[c] for c in ALLOWED_CLASSES if c in CLASS_TO_IDX]
+
 
 def parse_class_label(label: str):
-    """
-    Parses a class string like 'Tomato___Early_blight' into (plant, disease, is_healthy).
-    """
     if "___" in label:
-        parts = label.split("___", 1)
-        plant = parts[0].replace("_", " ").replace("(", "").replace(")", "").strip()
-        disease = parts[1].replace("_", " ").strip()
+        p, d = label.split("___", 1)
+        plant = p.replace("_", " ").replace("(", "").replace(")", "").strip()
+        disease = d.replace("_", " ").strip()
     else:
         plant = "Crop"
         disease = label.replace("_", " ").strip()
-
-    is_healthy = "healthy" in label.lower()
-    return plant, disease, is_healthy
+    return plant, disease, ("healthy" in label.lower())

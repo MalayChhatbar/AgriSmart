@@ -1,22 +1,25 @@
-# AgriSmart AI — Complete Dependencies
-# Python 3.10+ compatible
+# Judge quickstart: pip install -r requirements.txt then python model/predict.py --image model/sample_leaf.jpg
+# Core inference is ONNX Runtime (CPU) — no torch required for judges. Torch is optional for local weights.pt.
 
-# Core Web & API Services
+onnxruntime>=1.19.0
+numpy>=1.26.0
+pillow>=10.4.0
+huggingface_hub>=0.24.0
+
+# Gradio judge demo (Core + Metrics)
+gradio>=4.0.0
+
+# CLI (uv)
+typer>=0.12.0
+rich>=13.0.0
+
+# App (optional, FastAPI)
 fastapi>=0.110.0
 uvicorn>=0.29.0
 python-multipart>=0.0.9
-httpx>=0.27.0
-aiosqlite>=0.20.0
 
-# Computer Vision & Machine Learning (Mandatory Core Task)
-torch>=2.0.0
-torchvision>=0.15.0
-pillow>=10.0.0
-numpy>=1.24.0
-scikit-learn>=1.4.0
-onnxruntime>=1.16.0
-
-# Optional Model Extensions & Generative AI
-openai>=1.14.0
-gradio_client>=0.12.0
-tqdm>=4.66.0
+# Torch path (optional, only if you have model_weights.pt locally)
+# torch>=2.4.0
+# torchvision>=0.19.0
+# timm>=0.9.7
+# scikit-learn>=1.5.0

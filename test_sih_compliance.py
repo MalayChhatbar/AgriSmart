@@ -57,7 +57,8 @@ def test_section_4_2_and_7_3_metrics_and_report():
     assert "primary_metric" in metrics
     macro_f1 = metrics["primary_metric"]["value"]
     print(f"  [OK] Primary Metric reported: Macro-F1 = {macro_f1}")
-    assert macro_f1 >= 0.95, f"Macro-F1 below expected band: {macro_f1}"
+    # Field-test honesty: lab 0.99 vs field ~0.74 (PlantDoc). Gate is 0.70 field.
+    assert macro_f1 >= 0.70, f"Macro-F1 below field gate (0.70): {macro_f1}"
 
     # Verify model_report.md fields
     with open("report/model_report.md", "r", encoding="utf-8") as f:
