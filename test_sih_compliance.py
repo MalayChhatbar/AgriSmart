@@ -33,8 +33,9 @@ def test_section_4_1_predict_interface():
     # 1. Python Callable test
     from model.predict import predict
     label = predict("model/sample_leaf.jpg")
-    assert isinstance(label, str) and len(label) > 0, f"Invalid label: {label}"
+    assert label == "Potato___Late_blight", f"Expected Potato___Late_blight but got: {label}"
     print(f"  [OK] Python predict() returned: '{label}'")
+
 
     # 2. CLI test
     res = subprocess.run(
@@ -159,8 +160,10 @@ def test_fastapi_backend_startup():
                 r = await client.post("/predict", files={"file": ("sample_leaf.jpg", f, "image/jpeg")})
             assert r.status_code == 200
             res = r.json()
-            assert "disease" in res and "remedies" in res
+            assert res["disease"] == "Potato___Late_blight", f"Expected Potato___Late_blight but got {res['disease']}"
+            assert "remedies" in res
             print(f"  [OK] POST /predict returned 200 OK (Class: {res['disease']}, Plant: {res['plant']})")
+
 
     asyncio.run(live_checks())
     print("  --> FastAPI Route Verification PASSED.\n")

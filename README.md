@@ -43,7 +43,7 @@ python model/predict.py --image model/sample_leaf.jpg
 ```
 **Stdout Output:**
 ```
-Tomato___Late_blight
+Potato___Late_blight
 ```
 
 *For rich diagnostic details including confidence, plant species, and top-3 differential candidates:*
@@ -55,8 +55,9 @@ python model/predict.py --image model/sample_leaf.jpg --verbose
 ```python
 from model.predict import predict
 result = predict("model/sample_leaf.jpg")
-print(result)  # "Tomato___Late_blight"
+print(result)  # "Potato___Late_blight"
 ```
+
 
 ### Step 3: Run Full Evaluation Pipeline on Held-Out Split (Section 4.2)
 To verify our reported Macro-F1 (**0.9904**) and per-class precision/recall metrics from scratch:
