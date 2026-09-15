@@ -16,9 +16,15 @@ def get_model_engine() -> BaseModelAdapter:
 
     adapter_name = ACTIVE_ADAPTER.lower().strip()
     if adapter_name == "huggingface":
-        print("[ModelEngine] Loading HuggingFaceModelAdapter...")
-        from model_engine.hf_adapter import HuggingFaceModelAdapter
-        _cached_adapter = HuggingFaceModelAdapter()
+        try:
+            import gradio_client
+            print("[ModelEngine] Loading HuggingFaceModelAdapter...")
+            from model_engine.hf_adapter import HuggingFaceModelAdapter
+            _cached_adapter = HuggingFaceModelAdapter()
+        except ImportError:
+            print("[ModelEngine] gradio_client not installed; using DefaultModelAdapter (/model)...")
+            from model_engine.default_adapter import DefaultModelAdapter
+            _cached_adapter = DefaultModelAdapter()
     elif adapter_name == "teammate":
         print("[ModelEngine] Loading TeammateModelAdapter...")
         from model_engine.teammate_adapter import TeammateModelAdapter
@@ -29,6 +35,7 @@ def get_model_engine() -> BaseModelAdapter:
         _cached_adapter = DefaultModelAdapter()
 
     return _cached_adapter
+
 
 def predict_crop_disease(image_path: str, crop_hint: Optional[str] = None) -> ModelPrediction:
     """

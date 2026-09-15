@@ -69,17 +69,40 @@ app.add_middleware(
 )
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.dirname(BASE_DIR)
 STATIC_DIR = os.path.join(BASE_DIR, "static")
+FRONTEND_DIST = os.path.join(ROOT_DIR, "frontend", "dist")
+FRONTEND_ASSETS = os.path.join(FRONTEND_DIST, "assets")
+
+# Mount assets and static directories if available
+if os.path.exists(FRONTEND_ASSETS):
+    app.mount("/assets", StaticFiles(directory=FRONTEND_ASSETS), name="assets")
+
 if os.path.exists(STATIC_DIR):
     app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 @app.get("/", response_class=HTMLResponse)
-async def read_index():
-    index_path = os.path.join(STATIC_DIR, "index.html")
-    if os.path.exists(index_path):
-        with open(index_path, "r", encoding="utf-8") as f:
+async def read_root():
+    """Serves compiled React frontend if built, otherwise serves standalone dashboard."""
+    dist_index = os.path.join(FRONTEND_DIST, "index.html")
+    if os.path.exists(dist_index):
+        with open(dist_index, "r", encoding="utf-8") as f:
+            return f.read()
+    static_index = os.path.join(STATIC_DIR, "index.html")
+    if os.path.exists(static_index):
+        with open(static_index, "r", encoding="utf-8") as f:
             return f.read()
     return "AgriSmart AI Server Running. Navigate to /docs for API schema."
+
+@app.get("/dashboard", response_class=HTMLResponse)
+async def read_standalone_dashboard():
+    """Always serves the standalone single-file dashboard."""
+    static_index = os.path.join(STATIC_DIR, "index.html")
+    if os.path.exists(static_index):
+        with open(static_index, "r", encoding="utf-8") as f:
+            return f.read()
+    return "Dashboard template not found. Navigate to /docs for API schema."
+
 
 # ─── CORE TASK: PLUG-AND-PLAY CROP DISEASE DIAGNOSIS ───
 @app.post("/predict")

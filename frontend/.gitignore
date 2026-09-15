@@ -8,9 +8,12 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
-dist
+# dist (Tracked so cloned repo works out-of-the-box without npm install)
+!dist/
+!dist/**
 dist-ssr
 *.local
+
 
 # Editor directories and files
 .vscode/*
