@@ -6,8 +6,8 @@ AgriSmart AI - Crop Disease Prediction (SIH Section 4.1 compliant)
 
 Engine priority:
   1) ONNX Runtime local (model/model.onnx + model.onnx.data)  -> no torch
-  2) HF Space download (DakshBhavsar007/agrismart-crop-disease, repo_type="space") if not --offline
-  3) Torch/timm from model_weights.pt (if available)
+  2) HF Space download ONNX (DakshBhavsar007/agrismart-crop-disease, repo_type="space") if not --offline
+  3) Torch/timm from model_weights.pt — auto-downloaded from same HF Space if missing
   4) Calibrated heuristic (always returns Potato___Late_blight for sample_leaf.jpg)
 
 ONNX note: model.onnx is currently stale (previous training export). Warning emitted
@@ -134,6 +134,30 @@ def _ensure_hf_onnx(offline: bool = False) -> bool:
     except Exception:
         return False
 
+def _ensure_hf_weights(offline: bool = False) -> bool:
+    if WEIGHTS_PT.exists() or ALT_WEIGHTS.exists():
+        return True
+    if offline:
+        return False
+    try:
+        from huggingface_hub import hf_hub_download
+        # model_weights.pt is at Space root (198 MB, LFS)
+        try:
+            hf_hub_download(repo_id=HF_SPACE_ID, repo_type="space", filename="model_weights.pt", local_dir=str(BASE_DIR), local_dir_use_symlinks=False)
+        except Exception as e:
+            print(f"WARNING: HF weights download failed ({e})", file=sys.stderr)
+        # also ensure meta/advice for class mapping if missing
+        for fname in ["meta.json", "advice.json"]:
+            if not (BASE_DIR / fname).exists():
+                try:
+                    hf_hub_download(repo_id=HF_SPACE_ID, repo_type="space", filename=fname, local_dir=str(BASE_DIR), local_dir_use_symlinks=False)
+                except Exception:
+                    pass
+        return WEIGHTS_PT.exists() or ALT_WEIGHTS.exists()
+    except Exception as e:
+        print(f"WARNING: HF hub unavailable ({e})", file=sys.stderr)
+        return False
+
 # --- torch fallback (optional) ---
 _TORCH_ENGINE = None
 def _get_torch_engine():
@@ -246,10 +270,19 @@ def _predict_probs(image_path: str, allowed: Optional[List[int]], offline: bool 
         p = _onnx_logits_multi_view(image_path, allowed)
         if p is not None:
             return p, "onnx_hf"
-    # torch
+    # torch — ensure weights from HF Space if not local
+    if not offline:
+        _ensure_hf_weights(offline=False)
     p = _torch_probs_multi_view(image_path, allowed)
     if p is not None:
         return p, "torch"
+    # also try HF weights one more time if torch failed due to fresh download needing reload
+    if not offline and _ensure_hf_weights(offline=False):
+        global _TORCH_ENGINE
+        _TORCH_ENGINE = None
+        p = _torch_probs_multi_view(image_path, allowed)
+        if p is not None:
+            return p, "torch_hf"
     # heuristic
     label, conf = _heuristic_predict(image_path)
     probs = np.zeros(len(CLASSES), dtype=np.float32)
