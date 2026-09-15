@@ -172,5 +172,5 @@ agrismart predict --dir data/field_photos --out report.csv
 
 - **HF Space:** https://huggingface.co/spaces/DakshBhavsar007/agrismart-crop-disease — `model_weights.pt` (198 MB, LFS)
 - **Manual fetch:** `huggingface-cli download DakshBhavsar007/agrismart-crop-disease --repo-type space --local-dir model model.onnx model.onnx.data meta.json advice.json`
-- **Demo video:** https://drive.google.com/file/d/1TFWt1LzAA7w7L6nqNCJ3ULzpWuy0K5y4/view
+- **Demo video:** https://drive.google.com/drive/folders/1OOEPEcoz5p7tf7tgFxgMKRm3cPEcNaOX
 ---
