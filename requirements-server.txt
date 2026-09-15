@@ -1,4 +1,9 @@
 fastapi==0.110.0
 uvicorn==0.29.0
 python-multipart==0.0.9
+gradio_client
 aiosqlite
+httpx
+openai
+numpy>=1.24.0
+scikit-learn>=1.4.0
