@@ -2,8 +2,6 @@ import os
 from typing import Optional
 from model_engine.base import BaseModelAdapter, ModelPrediction
 from model_engine.config import ACTIVE_ADAPTER
-from model_engine.default_adapter import DefaultModelAdapter
-from model_engine.teammate_adapter import TeammateModelAdapter
 
 _cached_adapter: Optional[BaseModelAdapter] = None
 
@@ -23,9 +21,11 @@ def get_model_engine() -> BaseModelAdapter:
         _cached_adapter = HuggingFaceModelAdapter()
     elif adapter_name == "teammate":
         print("[ModelEngine] Loading TeammateModelAdapter...")
+        from model_engine.teammate_adapter import TeammateModelAdapter
         _cached_adapter = TeammateModelAdapter()
     else:
         print("[ModelEngine] Loading DefaultModelAdapter (Calibrated Dual-Model)...")
+        from model_engine.default_adapter import DefaultModelAdapter
         _cached_adapter = DefaultModelAdapter()
 
     return _cached_adapter
