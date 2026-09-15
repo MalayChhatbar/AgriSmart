@@ -176,6 +176,14 @@ async def generate_dynamic_remedy(
     )
 
     client = get_client(api_key)
+    
+    # Auto-correct model name based on API key type
+    if api_key and client:
+        if api_key.startswith("AIza") and "gemini" not in (model_name or "").lower():
+            model_name = "gemini-2.5-flash"
+        elif api_key.startswith("sk-") and "gpt" not in (model_name or "").lower():
+            model_name = "gpt-4o-mini"
+
     if client and not is_healthy:
         try:
             weather_str = ""
@@ -424,6 +432,14 @@ async def run_conversational_agent(
     Supports multiple tool iterations when needed.
     """
     client = get_client(api_key)
+    
+    # Auto-correct model name based on API key type
+    if api_key and client:
+        if api_key.startswith("AIza") and "gemini" not in (model_name or "").lower():
+            model_name = "gemini-2.5-flash"
+        elif api_key.startswith("sk-") and "gpt" not in (model_name or "").lower():
+            model_name = "gpt-4o-mini"
+
 
     # If no API key provided, fall back to grounded bilingual rules engine
     if not client:

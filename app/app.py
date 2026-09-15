@@ -229,6 +229,7 @@ async def get_weather_endpoint(
 # ─── SETTINGS & FARM PROFILE (BYOK & STORAGE) ───
 class SettingsPayload(BaseModel):
     nvidia_api_key: Optional[str] = None
+    gemini_api_key: Optional[str] = None
     deepseek_api_key: Optional[str] = None
     openweather_api_key: Optional[str] = None
     ai_model: Optional[str] = "deepseek-ai/deepseek-v3"
@@ -251,6 +252,7 @@ async def get_settings_endpoint():
         "settings": {
             "nvidia_api_key": all_s.get("nvidia_api_key", ""),
             "deepseek_api_key": all_s.get("deepseek_api_key", ""),
+            "gemini_api_key": all_s.get("gemini_api_key", ""),
             "openweather_api_key": all_s.get("openweather_api_key", ""),
             "ai_model": all_s.get("ai_model", "deepseek-ai/deepseek-v3"),
             "language": all_s.get("language", "en"),
@@ -267,6 +269,8 @@ async def save_settings_endpoint(payload: SettingsPayload):
         settings_dict["nvidia_api_key"] = payload.nvidia_api_key
     if payload.deepseek_api_key is not None:
         settings_dict["deepseek_api_key"] = payload.deepseek_api_key
+    if payload.gemini_api_key is not None:
+        settings_dict["gemini_api_key"] = payload.gemini_api_key
     if payload.openweather_api_key is not None:
         settings_dict["openweather_api_key"] = payload.openweather_api_key
     if payload.ai_model is not None:
@@ -326,7 +330,8 @@ async def chat_endpoint(req: ChatRequest):
     # 1. Fetch user API keys and farm profile from SQLite
     nvidia_key = await get_setting("nvidia_api_key")
     deepseek_key = await get_setting("deepseek_api_key")
-    chosen_key = nvidia_key or deepseek_key
+    gemini_key = await get_setting("gemini_api_key")
+    chosen_key = gemini_key or nvidia_key or deepseek_key
     ai_model = await get_setting("ai_model", "deepseek-ai/deepseek-v3")
 
     farm = await get_farm_profile()

@@ -69,6 +69,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
         body: JSON.stringify({
           nvidia_api_key: formData.nvidiaApiKey || '',
           deepseek_api_key: formData.openaiApiKey || '',
+          gemini_api_key: formData.geminiApiKey || '',
           openweather_api_key: formData.weatherApiKey || '',
           ai_model: formData.aiModel || 'deepseek-ai/deepseek-v3',
           farmer_name: formData.farmerName,
@@ -84,6 +85,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
     }
     setShowSavedNotification(true);
     setTimeout(() => setShowSavedNotification(false), 3000);
+    alert("Settings saved successfully!");
   };
 
   return (
